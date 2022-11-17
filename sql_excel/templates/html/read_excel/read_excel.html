@@ -1,0 +1,30 @@
+{% extends 'html/base.html' %}
+
+{% block title %}
+    <title>文件上传</title>
+{% endblock %}
+
+{% block content %}
+    <body>
+    <p>售后数据上传</p>
+    <form method="post" enctype="multipart/form-data" action="/upload/upload_excel_sale/">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="file" name="filename">
+        </div>
+        <input type="submit" value="提交" class="btn btn-info">
+    </form>
+    <p>零部件数据上传</p>
+    <form method="post" enctype="multipart/form-data" action="/upload/upload_excel_parts/">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="file" name="filename">
+        </div>
+        <input type="submit" value="提交" class="btn btn-info">
+    </form>
+    </body>
+{% endblock %}
+
+{% block js %}
+
+{% endblock %}

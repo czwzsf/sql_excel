@@ -6,16 +6,22 @@ from read_excel import models
 
 
 # Create your views here.
-class mis_form(forms.ModelForm):
+class sale_data_form(forms.ModelForm):
     class Meta:
-        model = models.Mis
+        model = models.sale_data
         fields = "__all__"
 
 
-def upload_excel(request):
+class parts_data_form(forms.ModelForm):
+    class Meta:
+        model = models.parts_data
+        fields = "__all__"
+
+
+def upload_excel_sale(request):
     """基于Excel的文件上传"""
-    # 1. 获取用户上传的文件对象
-    form = mis_form(data=request.POST, files=request.FILES)
+    # 1. 获取用户上传的销售数据文件对象
+    form = sale_data_form(data=request.POST, files=request.FILES)
     file_object = request.FILES.get("filename", None)
     if not file_object:
         return HttpResponse("没有文件可供上传")
@@ -28,21 +34,53 @@ def upload_excel(request):
         for item in range(len(row)):
             text = str(row[item].value)
             dict_list.append(text)
-        models.Mis.objects.create(production_code=dict_list[1], chassis_code=dict_list[2], offline_data=dict_list[3],
-                                  sale_data=dict_list[4], engine_number=dict_list[5], engine_type=dict_list[6],
-                                  responsible_organization=dict_list[7], dealer_code=dict_list[8],
-                                  dealer_name=dict_list[9], representative_office_code=dict_list[10],
-                                  representative_office_name=dict_list[11], cluth=dict_list[12], gear_box=dict_list[13],
-                                  Rear_axle_speed_ratio=dict_list[14], cage=dict_list[15],
-                                  spread_of_axles=dict_list[16],
-                                  aak_data=dict_list[17])
+        models.sale_data.objects.create(production_code=dict_list[1], chassis_code=dict_list[2],
+                                        offline_data=dict_list[3],
+                                        sale_data=dict_list[4], engine_number=dict_list[5], engine_type=dict_list[6],
+                                        responsible_organization=dict_list[7], dealer_code=dict_list[8],
+                                        dealer_name=dict_list[9], representative_office_code=dict_list[10],
+                                        representative_office_name=dict_list[11], cluth=dict_list[12],
+                                        gear_box=dict_list[13],
+                                        Rear_axle_speed_ratio=dict_list[14], cage=dict_list[15],
+                                        spread_of_axles=dict_list[16],
+                                        aak_data=dict_list[17])
         dict_list.clear()
         # if form.is_valid():
         #     form.save()
-    return render(request, 'html/reda_excel.html')
+    return HttpResponse("文件上传完成")
 
 
 def info(request):
     if request.method == "GET":
-        return render(request, 'html/reda_excel.html')
-    return render(request, 'html/reda_excel.html')
+        return render(request, 'html/read_excel/read_excel.html')
+    return render(request, 'html/read_excel/read_excel.html')
+
+
+def upload_excel_claim(request):
+    """基于Excel的索赔数据上传"""
+    return None
+
+
+def upload_excel_parts(request):
+    """基于Excel的文件上传"""
+    # 1. 获取用户上传的销售数据文件对象
+    form = parts_data_form(data=request.POST, files=request.FILES)
+    file_object_parts = request.FILES.get("filename", None)
+    if not file_object_parts:
+        return HttpResponse("没有文件可供上传")
+    # 2. 将文件对象传递给openpyxl，由openpyxl来进行读取
+    wb = load_workbook(file_object_parts)
+    # 3. 将读取出来的第一个表格传入到sheet里面
+    sheet = wb.worksheets[0]
+    dict_list_parts = []
+    for row in sheet.iter_rows(min_row=2):
+        for item in range(len(row)):
+            text = str(row[item].value)
+            dict_list_parts.append(text)
+        models.parts_data.objects.create(statistical_year=dict_list_parts[1], parts=dict_list_parts[2],
+                                         mis_3=dict_list_parts[3], mis_6=dict_list_parts[4], mis_9=dict_list_parts[5],
+                                         mis_12=dict_list_parts[6],
+                                         type=dict_list_parts[7], engine_platform=dict_list_parts[8],
+                                         let=dict_list_parts[9], purpose=dict_list_parts[10])
+        dict_list_parts.clear()
+    return HttpResponse("文件上传完成")
