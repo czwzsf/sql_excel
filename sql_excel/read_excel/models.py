@@ -40,3 +40,7 @@ class parts_data(models.Model):
     engine_platform = models.CharField(verbose_name="发动机平台", blank=True, null=True, max_length=32)
     let = models.CharField(verbose_name="排放", blank=True, null=True, max_length=32)
     purpose = models.CharField(verbose_name="用途", blank=True, null=True, max_length=32)
+
+
+class lbjmc(models.Model):
+    name_of_parts = models.CharField(verbose_name='零部件名称', max_length=256)

@@ -15,9 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from read_excel import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     # 文件上传（将excel传入sql数据库中）
-    path('upload/', include('read_excel.urls'))
+    path('upload/', include('read_excel.urls')),
+    # mis信息
+    path('mis/', views.mis_info),
 ]

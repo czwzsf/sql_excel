@@ -1,11 +1,13 @@
 from django import forms
 from django.shortcuts import render, HttpResponse, redirect
 from openpyxl.reader.excel import load_workbook
-
+from django.views.decorators.csrf import csrf_exempt
 from read_excel import models
+from django.db.models import Q
 
 
 # Create your views here.
+
 class sale_data_form(forms.ModelForm):
     class Meta:
         model = models.sale_data
@@ -84,3 +86,39 @@ def upload_excel_parts(request):
                                          let=dict_list_parts[9], purpose=dict_list_parts[10])
         dict_list_parts.clear()
     return HttpResponse("文件上传完成")
+
+
+@csrf_exempt
+def mis_info(request):
+    if request.method == 'GET':
+        queryset1 = models.lbjmc.objects.all().order_by('id')
+        form = parts_data_form()
+        context = {
+            "queryset1": queryset1,
+            "form": form,
+        }
+        return render(request, 'html/mis/mis.html', context=context)
+    context = {
+        "parts": request.POST.get('parts'),
+        "platform": request.POST.get('platform'),
+        "type": request.POST.get('type'),
+        "let": request.POST.get('let'),
+        "purpose": request.POST.get('purpose'),
+    }
+    # 零部件名称
+    query = Q(parts=context['parts'])
+    # 平台
+    if context['platform']:
+        query = query & Q(engine_platform=context['platform'])
+    if context['type']:
+        query = query & Q(type=context['type'])
+    if context['let']:
+        query = query & Q(let=context['let'])
+    print(models.parts_data.objects.filter(query))
+    if context['purpose']:
+        query = query & Q(purpose=context['purpose'])
+    print(models.parts_data.objects.filter(query))
+    query_set = models.parts_data.objects.filter(query)
+    print(query_set)
+    print(len(query_set))
+    return render(request, 'html/mis/mis_chart.html', context)
