@@ -107,17 +107,19 @@ def mis_info(request):
     }
     # 零部件名称
     query = Q(parts=context['parts'])
-    # 平台
+    # 查询发动机平台
     if context['platform']:
         query = query & Q(engine_platform=context['platform'])
+    # 查询车型
     if context['type']:
         query = query & Q(type=context['type'])
+    # 查询排放
     if context['let']:
         query = query & Q(let=context['let'])
-    print(models.parts_data.objects.filter(query))
+    # 查询用途
     if context['purpose']:
         query = query & Q(purpose=context['purpose'])
-    print(models.parts_data.objects.filter(query))
+    # 查询前端用户选择
     query_set = models.parts_data.objects.filter(query)
     print(query_set)
     print(len(query_set))
