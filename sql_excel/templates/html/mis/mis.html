@@ -11,6 +11,7 @@
             <label class="col-sm-1 col-form-label">零部件名称</label>
             <div class="col-sm-1">
                 <select class="form-control select2" id="userId1" name="parts">
+                    <option value=""></option>
                     {% for foo in queryset1 %}
                         <option value="{{ foo.name_of_parts }}">{{ foo.name_of_parts }}</option>
                     {% endfor %}

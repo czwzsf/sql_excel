@@ -1,9 +1,11 @@
 from django import forms
+from django.http import JsonResponse
 from django.shortcuts import render, HttpResponse, redirect
 from openpyxl.reader.excel import load_workbook
 from django.views.decorators.csrf import csrf_exempt
 from read_excel import models
 from django.db.models import Q
+import json
 
 
 # Create your views here.
@@ -90,6 +92,7 @@ def upload_excel_parts(request):
 
 @csrf_exempt
 def mis_info(request):
+    # 用户第一次请求时为
     if request.method == 'GET':
         queryset1 = models.lbjmc.objects.all().order_by('id')
         form = parts_data_form()
@@ -121,6 +124,56 @@ def mis_info(request):
         query = query & Q(purpose=context['purpose'])
     # 查询前端用户选择
     query_set = models.parts_data.objects.filter(query)
-    print(query_set)
-    print(len(query_set))
+    if query_set:
+        # 标签
+        legend = ['3MIS', '6MIS', '9MIS', '12MIS']
+        # 横坐标
+        x_axis = []
+        # mis信息
+        data_3mis = []
+        data_6mis = []
+        data_9mis = []
+        data_12mis = []
+        title = query_set[0].parts
+        for form in query_set:
+            x_axis.append(form.statistical_year)
+            data_3mis.append(form.mis_3)
+            data_6mis.append(form.mis_6)
+            data_9mis.append(form.mis_9)
+            data_12mis.append(form.mis_12)
+        series_list = [
+            {
+                "name": "3MIS",
+                "type": "line",
+                "data": data_3mis,
+                "stack": "Total",
+            },
+            {
+                "name": "6MIS",
+                "type": "line",
+                "data": data_6mis,
+                "stack": "Total",
+            },
+            {
+                "name": "9MIS",
+                "type": "line",
+                "data": data_9mis,
+                "stack": "Total",
+            },
+            {
+                "name": "12MIS",
+                "type": "line",
+                "data": data_12mis,
+                "stack": "Total",
+            },
+        ]
+        context = {
+            "status": True,
+            "title": title,
+            "legend": legend,
+            "series_list": series_list,
+            "x_axis": x_axis,
+        }
+        return render(request, 'html/mis/mis_chart.html', context)
+
     return render(request, 'html/mis/mis_chart.html', context)
