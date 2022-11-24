@@ -125,6 +125,7 @@ def mis_info(request):
     # 查询前端用户选择
     query_set = models.parts_data.objects.filter(query)
     if query_set:
+        queryset1 = models.lbjmc.objects.all().order_by('id')
         # 标签
         legend = ['3MIS', '6MIS', '9MIS', '12MIS']
         # 横坐标
@@ -168,12 +169,22 @@ def mis_info(request):
             },
         ]
         context = {
+            "parts": request.POST.get('parts'),
+            "platform": request.POST.get('platform'),
+            "type": request.POST.get('type'),
+            "let": request.POST.get('let'),
+            "purpose": request.POST.get('purpose'),
             "status": True,
             "title": title,
             "legend": legend,
             "series_list": series_list,
             "x_axis": x_axis,
+            "queryset1": queryset1,
         }
         return render(request, 'html/mis/mis_chart.html', context)
-
     return render(request, 'html/mis/mis_chart.html', context)
+
+
+def mis_chart(request):
+    str1 = "测试js"
+    return render(request, 'html/test.html', {'str1': json.dumps(str1)})

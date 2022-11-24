@@ -13,6 +13,9 @@
             <div class="col-sm-1">
                 <select class="form-control select2" id="userId1" name="parts">
                     <option style="color: blueviolet" value="{{ parts }}">{{ parts }}</option>
+                    {% for foo in queryset1 %}
+                        <option value="{{ foo.name_of_parts }}">{{ foo.name_of_parts }}</option>
+                    {% endfor %}
                 </select>
             </div>
             <label class="col-sm-1 col-form-label">平台</label>
@@ -54,7 +57,7 @@
     </form>
     <div class="container">
         <div class="panel panel-default">
-            <div class="panel-heading">{{ title }}</div>
+            <div class="panel-heading">{{ title|safe }}</div>
             <div class="panel-body">
                 <div id="m1" style="width: auto;height:400px;"></div>
             </div>
@@ -65,7 +68,6 @@
 
 {% block js %}
     <script type="text/javascript">
-
         $(function () {
             initLine();
         })
@@ -74,19 +76,22 @@
          * 初始化折线图
          */
         function initLine() {
-
             var chartDom = document.getElementById('m1');
             var myChart = echarts.init(chartDom);
             var option;
+            var title = "{{ title|safe }}";
+            var legend = {{ legend|safe }};
+            var xAxis = {{ x_axis|safe }};
+            var series = {{ series_list|safe }};
             option = {
                 title: {
-                    text: {{ title }}
+                    text: title
                 },
                 tooltip: {
                     trigger: 'axis'
                 },
                 legend: {
-                    data: {{ legend }}
+                    data: legend
                 },
                 grid: {
                     left: '3%',
@@ -102,13 +107,14 @@
                 xAxis: {
                     type: 'category',
                     boundaryGap: false,
-                    data: {{ x_axis }}
+                    data: xAxis
                 },
                 yAxis: {
                     type: 'value'
                 },
-                series: {{ series_list }}
+                series: series
             };
+            option && myChart.setOption(option);
         }
     </script>
     <script src="{% static 'js/echarts.js' %}"></script>

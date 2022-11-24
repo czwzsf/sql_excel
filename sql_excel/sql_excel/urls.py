@@ -23,4 +23,6 @@ urlpatterns = [
     path('upload/', include('read_excel.urls')),
     # mis信息
     path('mis/', views.mis_info),
+    # mis图标
+    path('mis/chart/', views.mis_chart),
 ]
