@@ -14,6 +14,14 @@
         </div>
         <input type="submit" value="提交" class="btn btn-info">
     </form>
+    <p>售后测试数据上传</p>
+    <form method="post" enctype="multipart/form-data" action="/upload/upload_excel_sale_test/">
+        {% csrf_token %}
+        <div class="form-group">
+            <input type="file" name="filename">
+        </div>
+        <input type="submit" value="提交" class="btn btn-info">
+    </form>
     <p>零部件数据上传</p>
     <form method="post" enctype="multipart/form-data" action="/upload/upload_excel_parts/">
         {% csrf_token %}
